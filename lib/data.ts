@@ -1,22 +1,22 @@
-import { Data, IProductInput, IUserInput } from '@/types'
-import { toSlug } from './utils'
-import bcrypt from 'bcryptjs'
-import { i18n } from '@/i18n-config'
+import { Data, IProductInput, IUserInput } from '@/types';
+import { toSlug } from './utils';
+import bcrypt from 'bcryptjs';
+import { i18n } from '@/i18n-config';
 
 const users: IUserInput[] = [
   {
-    name: 'John',
+    name: 'Habib',
     email: 'admin@example.com',
     password: bcrypt.hashSync('123456', 5),
     role: 'Admin',
     address: {
-      fullName: 'John Doe',
-      street: '111 Main St',
-      city: 'New York',
+      fullName: 'Habibur Rahman',
+      street: 'Natore',
+      city: 'Bangladesh',
       province: 'NY',
-      postalCode: '10001',
-      country: 'USA',
-      phone: '123-456-7890',
+      postalCode: '6400',
+      country: 'Bangladesh',
+      phone: '01647235179',
     },
     paymentMethod: 'Stripe',
     emailVerified: false,
@@ -259,7 +259,7 @@ const users: IUserInput[] = [
     paymentMethod: 'PayPal',
     emailVerified: false,
   },
-]
+];
 
 const products: IProductInput[] = [
   {
@@ -965,7 +965,7 @@ const products: IProductInput[] = [
 
     reviews: [],
   },
-]
+];
 const reviews = [
   {
     rating: 1,
@@ -1057,7 +1057,7 @@ const reviews = [
     comment:
       "Love this product! It's durable, stylish, and works great. Would buy again without hesitation.",
   },
-]
+];
 
 const data: Data = {
   users,
@@ -1240,6 +1240,13 @@ We also provide helpful resources such as order tracking, product guides, and FA
       url: '/search?category=Wrist Watches',
       isPublished: true,
     },
+    {
+      title: 'Best Deals on mobile',
+      buttonCaption: 'phone',
+      image: '/images/banner2.jpg',
+      url: '/search?category=Wrist Watches',
+      isPublished: true,
+    },
   ],
   settings: [
     {
@@ -1251,18 +1258,18 @@ We also provide helpful resources such as order tracking, product guides, and FA
         pageSize: 9,
       },
       site: {
-        name: 'NxtAmzn',
-        description:
-          'NxtAmzn is a sample Ecommerce website built with Next.js, Tailwind CSS, and MongoDB.',
-        keywords: 'Next Ecommerce, Next.js, Tailwind CSS, MongoDB',
-        url: 'https://next-mongo-ecommerce-final.vercel.app',
-        logo: '/icons/logo.svg',
-        slogan: 'Spend less, enjoy more.',
+        name: 'SMS IT AGENCY',
+        description: '.',
+        keywords: 'Next Ecommerce',
+        url: 'https://www.smsitagency.com',
+        logo: '/icons/logo.jpg',
+        slogan:
+          'আপনার আস্থা, আমাদের প্রতিশ্রুতি। সফলতার পথে আপনার নির্ভরযোগ্য সঙ্গী.',
         author: 'Next Ecommerce',
-        copyright: '2000-2024, Next-Ecommerce.com, Inc. or its affiliates',
+        copyright: '2000-2024, isit smsitagency.com, Inc. or its affiliates',
         email: 'admin@example.com',
-        address: '123, Main Street, Anytown, CA, Zip 12345',
-        phone: '+1 (123) 456-7890',
+        address: 'Bangladesh, Natore, Bangladesh, 6400',
+        phone: '01785-937017',
       },
       carousels: [
         {
@@ -1278,10 +1285,10 @@ We also provide helpful resources such as order tracking, product guides, and FA
           url: '/search?category=T-Shirts',
         },
         {
-          title: 'Best Deals on Wrist Watches',
+          title: 'Best Deals on Wrist mobie',
           buttonCaption: 'See More',
-          image: '/images/banner2.jpg',
-          url: '/search?category=Wrist Watches',
+          image: '/images/banner4.jpeg',
+          url: '/search?category=Wrist mobile',
         },
       ],
       availableLanguages: i18n.locales.map((locale) => ({
@@ -1289,23 +1296,52 @@ We also provide helpful resources such as order tracking, product guides, and FA
         name: locale.name,
       })),
       defaultLanguage: 'en-US',
+      // availableCurrencies: [
+
+      //   {
+      //     name: 'United States Dollar',
+      //     code: 'USD',
+      //     symbol: '$',
+      //     convertRate: 1,
+      //   },
+      //   { name: 'Euro', code: 'EUR', symbol: '€', convertRate: 0.96 },
+      //   { name: 'UAE Dirham', code: 'AED', symbol: 'AED', convertRate: 3.67 },
+      // ],
+
       availableCurrencies: [
+        {
+          name: 'Bangladeshi Taka', // নাম বাংলায় বা English-এ রাখতে পারেন
+          code: 'BDT', // আন্তর্জাতিক কারেন্সি কোড
+          symbol: '৳', // টাকার সিম্বল
+          convertRate: 1, // যদি BDT কে main currency করতে চান, 1 দিন
+        },
         {
           name: 'United States Dollar',
           code: 'USD',
           symbol: '$',
-          convertRate: 1,
+          convertRate: 0.012, // ১ BDT = 0.012 USD
         },
-        { name: 'Euro', code: 'EUR', symbol: '€', convertRate: 0.96 },
-        { name: 'UAE Dirham', code: 'AED', symbol: 'AED', convertRate: 3.67 },
+        {
+          name: 'Euro',
+          code: 'EUR',
+          symbol: '€',
+          convertRate: 0.011, // ১ BDT = 0.011 EUR
+        },
+        {
+          name: 'UAE Dirham',
+          code: 'AED',
+          symbol: 'AED',
+          convertRate: 0.045, // ১ BDT = 0.045 AED
+        },
       ],
       defaultCurrency: 'USD',
       availablePaymentMethods: [
         { name: 'PayPal', commission: 0 },
         { name: 'Stripe', commission: 0 },
         { name: 'Cash On Delivery', commission: 0 },
+        { name: 'Bikash', commission: 0 }, // Bikash method যোগ করা
       ],
-      defaultPaymentMethod: 'PayPal',
+      defaultPaymentMethod: 'Cash On Delivery',
       availableDeliveryDates: [
         {
           name: 'Tomorrow',
@@ -1329,6 +1365,6 @@ We also provide helpful resources such as order tracking, product guides, and FA
       defaultDeliveryDate: 'Next 5 Days',
     },
   ],
-}
+};
 
-export default data
+export default data;
