@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormStatus } from 'react-dom';
+import { useFormStatus } from 'react-dom/hooks';
 import { Button } from '@/components/ui/button';
 import { SignInWithGoogle } from '@/lib/actions/user.actions';
 
