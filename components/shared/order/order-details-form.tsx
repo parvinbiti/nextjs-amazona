@@ -1,10 +1,10 @@
-'use client'
+'use client';
 
-import Image from 'next/image'
-import Link from 'next/link'
+import Image from 'next/image';
+import Link from 'next/link';
 
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -12,20 +12,20 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table'
-import { IOrder } from '@/lib/db/models/order.model'
-import { cn, formatDateTime } from '@/lib/utils'
-import { buttonVariants } from '@/components/ui/button'
-import ProductPrice from '../product/product-price'
-import ActionButton from '../action-button'
-import { deliverOrder, updateOrderToPaid } from '@/lib/actions/order.actions'
+} from '@/components/ui/table';
+import { IOrder } from '@/lib/db/models/order.model';
+import { cn, formatDateTime } from '@/lib/utils';
+import { buttonVariants } from '@/components/ui/button';
+import ProductPrice from '../product/product-price';
+import ActionButton from '../action-button';
+import { deliverOrder, updateOrderToPaid } from '@/lib/actions/order.actions';
 
 export default function OrderDetailsForm({
   order,
   isAdmin,
 }: {
-  order: IOrder
-  isAdmin: boolean
+  order: IOrder;
+  isAdmin: boolean;
 }) {
   const {
     shippingAddress,
@@ -40,14 +40,14 @@ export default function OrderDetailsForm({
     isDelivered,
     deliveredAt,
     expectedDeliveryDate,
-  } = order
+  } = order;
 
   return (
-    <div className='grid md:grid-cols-3 md:gap-5'>
-      <div className='overflow-x-auto md:col-span-2 space-y-4'>
+    <div className="grid md:grid-cols-3 md:gap-5">
+      <div className="overflow-x-auto md:col-span-2 space-y-4">
         <Card>
-          <CardContent className='p-4 gap-4'>
-            <h2 className='text-xl pb-4'>Shipping Address</h2>
+          <CardContent className="p-4 gap-4">
+            <h2 className="text-xl pb-4">Shipping Address</h2>
             <p>
               {shippingAddress.fullName} {shippingAddress.phone}
             </p>
@@ -64,7 +64,7 @@ export default function OrderDetailsForm({
             ) : (
               <div>
                 {' '}
-                <Badge variant='destructive'>Not delivered</Badge>
+                <Badge variant="destructive">Not delivered</Badge>
                 <div>
                   Expected delivery at{' '}
                   {formatDateTime(expectedDeliveryDate!).dateTime}
@@ -74,19 +74,19 @@ export default function OrderDetailsForm({
           </CardContent>
         </Card>
         <Card>
-          <CardContent className='p-4 gap-4'>
-            <h2 className='text-xl pb-4'>Payment Method</h2>
+          <CardContent className="p-4 gap-4">
+            <h2 className="text-xl pb-4">Payment Method</h2>
             <p>{paymentMethod}</p>
             {isPaid ? (
               <Badge>Paid at {formatDateTime(paidAt!).dateTime}</Badge>
             ) : (
-              <Badge variant='destructive'>Not paid</Badge>
+              <Badge variant="destructive">Not paid</Badge>
             )}
           </CardContent>
         </Card>
         <Card>
-          <CardContent className='p-4   gap-4'>
-            <h2 className='text-xl pb-4'>Order Items</h2>
+          <CardContent className="p-4   gap-4">
+            <h2 className="text-xl pb-4">Order Items</h2>
             <Table>
               <TableHeader>
                 <TableRow>
@@ -101,7 +101,7 @@ export default function OrderDetailsForm({
                     <TableCell>
                       <Link
                         href={`/product/${item.slug}`}
-                        className='flex items-center'
+                        className="flex items-center"
                       >
                         <Image
                           src={item.image}
@@ -109,13 +109,13 @@ export default function OrderDetailsForm({
                           width={50}
                           height={50}
                         ></Image>
-                        <span className='px-2'>{item.name}</span>
+                        <span className="px-2">{item.name}</span>
                       </Link>
                     </TableCell>
                     <TableCell>
-                      <span className='px-2'>{item.quantity}</span>
+                      <span className="px-2">{item.quantity}</span>
                     </TableCell>
-                    <TableCell className='text-right'>${item.price}</TableCell>
+                    <TableCell className="text-right">${item.price}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -125,30 +125,30 @@ export default function OrderDetailsForm({
       </div>
       <div>
         <Card>
-          <CardContent className='p-4  space-y-4 gap-4'>
-            <h2 className='text-xl pb-4'>Order Summary</h2>
-            <div className='flex justify-between'>
+          <CardContent className="p-4  space-y-4 gap-4">
+            <h2 className="text-xl pb-4">Order Summary</h2>
+            <div className="flex justify-between">
               <div>Items</div>
               <div>
                 {' '}
                 <ProductPrice price={itemsPrice} plain />
               </div>
             </div>
-            <div className='flex justify-between'>
+            <div className="flex justify-between">
               <div>Tax</div>
               <div>
                 {' '}
                 <ProductPrice price={taxPrice} plain />
               </div>
             </div>
-            <div className='flex justify-between'>
+            <div className="flex justify-between">
               <div>Shipping</div>
               <div>
                 {' '}
                 <ProductPrice price={shippingPrice} plain />
               </div>
             </div>
-            <div className='flex justify-between'>
+            <div className="flex justify-between">
               <div>Total</div>
               <div>
                 {' '}
@@ -167,19 +167,19 @@ export default function OrderDetailsForm({
 
             {isAdmin && !isPaid && paymentMethod === 'Cash On Delivery' && (
               <ActionButton
-                caption='Mark as paid'
-                action={() => updateOrderToPaid(order._id)}
+                caption="Mark as paid"
+                action={() => updateOrderToPaid(order._id.toString())}
               />
             )}
             {isAdmin && isPaid && !isDelivered && (
               <ActionButton
-                caption='Mark as delivered'
-                action={() => deliverOrder(order._id)}
+                caption="Mark as delivered"
+                action={() => deliverOrder(order._id.toString())}
               />
             )}
           </CardContent>
         </Card>
       </div>
     </div>
-  )
+  );
 }

@@ -1,10 +1,9 @@
-import { Document, Model, model, models, Schema } from 'mongoose'
-import { IProductInput } from '@/types'
+import { Document, Model, model, models, Schema } from 'mongoose';
+import { IProductInput } from '@/types';
 
 export interface IProduct extends Document, IProductInput {
-  _id: string
-  createdAt: Date
-  updatedAt: Date
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const productSchema = new Schema<IProduct>(
@@ -89,10 +88,10 @@ const productSchema = new Schema<IProduct>(
   {
     timestamps: true,
   }
-)
+);
 
 const Product =
   (models.Product as Model<IProduct>) ||
-  model<IProduct>('Product', productSchema)
+  model<IProduct>('Product', productSchema);
 
-export default Product
+export default Product;
