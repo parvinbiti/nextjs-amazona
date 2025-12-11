@@ -1,10 +1,11 @@
-import { IReviewInput } from '@/types'
-import { Document, Model, model, models, Schema } from 'mongoose'
+import { IReviewInput } from '@/types';
+import { Document, Model, model, models, Schema } from 'mongoose';
+import { Types } from 'mongoose';
 
 export interface IReview extends Document, IReviewInput {
-  _id: string
-  createdAt: Date
-  updatedAt: Date
+  _id: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 const reviewSchema = new Schema<IReview>(
   {
@@ -39,9 +40,9 @@ const reviewSchema = new Schema<IReview>(
   {
     timestamps: true,
   }
-)
+);
 
 const Review =
-  (models.Review as Model<IReview>) || model<IReview>('Review', reviewSchema)
+  (models.Review as Model<IReview>) || model<IReview>('Review', reviewSchema);
 
-export default Review
+export default Review;
