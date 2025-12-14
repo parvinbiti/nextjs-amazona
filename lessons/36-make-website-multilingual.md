@@ -8,25 +8,25 @@
 export const SiteLanguageSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   code: z.string().min(1, 'Code is required'),
-})
+});
 export const CarouselSchema = z.object({
   title: z.string().min(1, 'title is required'),
   url: z.string().min(1, 'url is required'),
   image: z.string().min(1, 'image is required'),
   buttonCaption: z.string().min(1, 'buttonCaption is required'),
-})
+});
 
 export const SiteCurrencySchema = z.object({
   name: z.string().min(1, 'Name is required'),
   code: z.string().min(1, 'Code is required'),
   convertRate: z.coerce.number().min(0, 'Convert rate must be at least 0'),
   symbol: z.string().min(1, 'Symbol is required'),
-})
+});
 
 export const PaymentMethodSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   commission: z.coerce.number().min(0, 'Commission must be at least 0'),
-})
+});
 
 export const DeliveryDateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -35,7 +35,7 @@ export const DeliveryDateSchema = z.object({
   freeShippingMinPrice: z.coerce
     .number()
     .min(0, 'Free shipping min amount must be at least 0'),
-})
+});
 
 export const SettingInputSchema = z.object({
   // PROMPT: create fields
@@ -92,7 +92,7 @@ export const SettingInputSchema = z.object({
     .array(DeliveryDateSchema)
     .min(1, 'At least one delivery date is required'),
   defaultDeliveryDate: z.string().min(1, 'Delivery date is required'),
-})
+});
 ```
 
 ## update types/index.ts
@@ -121,13 +121,13 @@ export type DeliveryDate = z.infer<typeof DeliveryDateSchema>
 ## create lib/db/models/setting.model.ts
 
 ```ts
-import { ISettingInput } from '@/types'
-import { Document, Model, model, models, Schema } from 'mongoose'
+import { ISettingInput } from '@/types';
+import { Document, Model, model, models, Schema } from 'mongoose';
 
 export interface ISetting extends Document, ISettingInput {
-  _id: string
-  createdAt: Date
-  updatedAt: Date
+  _id: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const settingSchema = new Schema<ISetting>(
@@ -221,13 +221,13 @@ const settingSchema = new Schema<ISetting>(
   {
     timestamps: true,
   }
-)
+);
 
 const Setting =
   (models.Setting as Model<ISetting>) ||
-  model<ISetting>('Setting', settingSchema)
+  model<ISetting>('Setting', settingSchema);
 
-export default Setting
+export default Setting;
 ```
 
 ## update lib/data.ts
@@ -328,53 +328,53 @@ import { i18n } from '@/i18n-config'
 
 ```ts
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import data from '@/lib/data'
-import { connectToDatabase } from '.'
-import User from './models/user.model'
-import Product from './models/product.model'
-import Review from './models/review.model'
-import { cwd } from 'process'
-import { loadEnvConfig } from '@next/env'
-import Order from './models/order.model'
+import data from '@/lib/data';
+import { connectToDatabase } from '.';
+import User from './models/user.model';
+import Product from './models/product.model';
+import Review from './models/review.model';
+import { cwd } from 'process';
+import { loadEnvConfig } from '@next/env';
+import Order from './models/order.model';
 import {
   calculateFutureDate,
   calculatePastDate,
   generateId,
   round2,
-} from '../utils'
-import WebPage from './models/web-page.model'
-import Setting from './models/setting.model'
-import { OrderItem, IOrderInput, ShippingAddress } from '@/types'
+} from '../utils';
+import WebPage from './models/web-page.model';
+import Setting from './models/setting.model';
+import { OrderItem, IOrderInput, ShippingAddress } from '@/types';
 
-loadEnvConfig(cwd())
+loadEnvConfig(cwd());
 
 const main = async () => {
   try {
-    const { users, products, reviews, webPages, settings } = data
-    await connectToDatabase(process.env.MONGODB_URI)
+    const { users, products, reviews, webPages, settings } = data;
+    await connectToDatabase(process.env.MONGODB_URI);
 
-    await User.deleteMany()
-    const createdUser = await User.insertMany(users)
+    await User.deleteMany();
+    const createdUser = await User.insertMany(users);
 
-    await Setting.deleteMany()
-    const createdSetting = await Setting.insertMany(settings)
+    await Setting.deleteMany();
+    const createdSetting = await Setting.insertMany(settings);
 
-    await WebPage.deleteMany()
-    await WebPage.insertMany(webPages)
+    await WebPage.deleteMany();
+    await WebPage.insertMany(webPages);
 
-    await Product.deleteMany()
+    await Product.deleteMany();
     const createdProducts = await Product.insertMany(
       products.map((x) => ({ ...x, _id: undefined }))
-    )
+    );
 
-    await Review.deleteMany()
-    const rws = []
+    await Review.deleteMany();
+    const rws = [];
     for (let i = 0; i < createdProducts.length; i++) {
-      let x = 0
-      const { ratingDistribution } = createdProducts[i]
+      let x = 0;
+      const { ratingDistribution } = createdProducts[i];
       for (let j = 0; j < ratingDistribution.length; j++) {
         for (let k = 0; k < ratingDistribution[j].count; k++) {
-          x++
+          x++;
           rws.push({
             ...reviews.filter((x) => x.rating === j + 1)[
               x % reviews.filter((x) => x.rating === j + 1).length
@@ -384,14 +384,14 @@ const main = async () => {
             user: createdUser[x % createdUser.length]._id,
             updatedAt: Date.now(),
             createdAt: Date.now(),
-          })
+          });
         }
       }
     }
-    const createdReviews = await Review.insertMany(rws)
+    const createdReviews = await Review.insertMany(rws);
 
-    await Order.deleteMany()
-    const orders = []
+    await Order.deleteMany();
+    const orders = [];
     for (let i = 0; i < 200; i++) {
       orders.push(
         await generateOrder(
@@ -399,9 +399,9 @@ const main = async () => {
           createdUser.map((x) => x._id),
           createdProducts.map((x) => x._id)
         )
-      )
+      );
     }
-    const createdOrders = await Order.insertMany(orders)
+    const createdOrders = await Order.insertMany(orders);
     console.log({
       createdUser,
       createdProducts,
@@ -409,20 +409,20 @@ const main = async () => {
       createdOrders,
       createdSetting,
       message: 'Seeded database successfully',
-    })
-    process.exit(0)
+    });
+    process.exit(0);
   } catch (error) {
-    console.error(error)
-    throw new Error('Failed to seed database')
+    console.error(error);
+    throw new Error('Failed to seed database');
   }
-}
+};
 
 const generateOrder = async (
   i: number,
   users: any,
   products: any
 ): Promise<IOrderInput> => {
-  const product1 = await Product.findById(products[i % products.length])
+  const product1 = await Product.findById(products[i % products.length]);
 
   const product2 = await Product.findById(
     products[
@@ -430,16 +430,16 @@ const generateOrder = async (
         ? (i % products.length) - 1
         : (i % products.length) + 1
     ]
-  )
+  );
   const product3 = await Product.findById(
     products[
       i % products.length >= products.length - 2
         ? (i % products.length) - 2
         : (i % products.length) + 2
     ]
-  )
+  );
 
-  if (!product1 || !product2 || !product3) throw new Error('Product not found')
+  if (!product1 || !product2 || !product3) throw new Error('Product not found');
 
   const items = [
     {
@@ -475,7 +475,7 @@ const generateOrder = async (
       price: product3.price,
       countInStock: product1.countInStock,
     },
-  ]
+  ];
 
   const order = {
     user: users[i % users.length],
@@ -496,38 +496,38 @@ const generateOrder = async (
       shippingAddress: data.users[i % users.length].address,
       deliveryDateIndex: i % 2,
     }),
-  }
-  return order
-}
+  };
+  return order;
+};
 
 export const calcDeliveryDateAndPriceForSeed = ({
   items,
   deliveryDateIndex,
 }: {
-  deliveryDateIndex?: number
-  items: OrderItem[]
-  shippingAddress?: ShippingAddress
+  deliveryDateIndex?: number;
+  items: OrderItem[];
+  shippingAddress?: ShippingAddress;
 }) => {
-  const { availableDeliveryDates } = data.settings[0]
+  const { availableDeliveryDates } = data.settings[0];
   const itemsPrice = round2(
     items.reduce((acc, item) => acc + item.price * item.quantity, 0)
-  )
+  );
 
   const deliveryDate =
     availableDeliveryDates[
       deliveryDateIndex === undefined
         ? availableDeliveryDates.length - 1
         : deliveryDateIndex
-    ]
+    ];
 
-  const shippingPrice = deliveryDate.shippingPrice
+  const shippingPrice = deliveryDate.shippingPrice;
 
-  const taxPrice = round2(itemsPrice * 0.15)
+  const taxPrice = round2(itemsPrice * 0.15);
   const totalPrice = round2(
     itemsPrice +
       (shippingPrice ? round2(shippingPrice) : 0) +
       (taxPrice ? round2(taxPrice) : 0)
-  )
+  );
   return {
     availableDeliveryDates,
     deliveryDateIndex:
@@ -538,10 +538,10 @@ export const calcDeliveryDateAndPriceForSeed = ({
     shippingPrice,
     taxPrice,
     totalPrice,
-  }
-}
+  };
+};
 
-main()
+main();
 ```
 
 ## create hooks/use-setting-store.ts
@@ -549,15 +549,15 @@ main()
 ```ts
 /* eslint-disable no-unused-vars */
 
-import data from '@/lib/data'
-import { ClientSetting, SiteCurrency } from '@/types'
-import { create } from 'zustand'
+import data from '@/lib/data';
+import { ClientSetting, SiteCurrency } from '@/types';
+import { create } from 'zustand';
 
 interface SettingState {
-  setting: ClientSetting
-  setSetting: (newSetting: ClientSetting) => void
-  getCurrency: () => SiteCurrency
-  setCurrency: (currency: string) => void
+  setting: ClientSetting;
+  setSetting: (newSetting: ClientSetting) => void;
+  getCurrency: () => SiteCurrency;
+  setCurrency: (currency: string) => void;
 }
 
 const useSettingStore = create<SettingState>((set, get) => ({
@@ -571,49 +571,49 @@ const useSettingStore = create<SettingState>((set, get) => ({
         ...newSetting,
         currency: newSetting.currency || get().setting.currency,
       },
-    })
+    });
   },
   getCurrency: () => {
     return (
       get().setting.availableCurrencies.find(
         (c) => c.code === get().setting.currency
       ) || data.settings[0].availableCurrencies[0]
-    )
+    );
   },
   setCurrency: async (currency: string) => {
-    set({ setting: { ...get().setting, currency } })
+    set({ setting: { ...get().setting, currency } });
   },
-}))
+}));
 
-export default useSettingStore
+export default useSettingStore;
 ```
 
 ## create components/shared/app-initializer.tsx
 
 ```ts
-import React, { useEffect, useState } from 'react'
-import useSettingStore from '@/hooks/use-setting-store'
-import { ClientSetting } from '@/types'
+import React, { useEffect, useState } from 'react';
+import useSettingStore from '@/hooks/use-setting-store';
+import { ClientSetting } from '@/types';
 
 export default function AppInitializer({
   setting,
   children,
 }: {
-  setting: ClientSetting
-  children: React.ReactNode
+  setting: ClientSetting;
+  children: React.ReactNode;
 }) {
-  const [rendered, setRendered] = useState(false)
+  const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
-    setRendered(true)
-  }, [setting])
+    setRendered(true);
+  }, [setting]);
   if (!rendered) {
     useSettingStore.setState({
       setting,
-    })
+    });
   }
 
-  return children
+  return children;
 }
 ```
 
@@ -655,21 +655,21 @@ export const i18n = {
     { code: 'ar', name: 'العربية', icon: '🇸🇦' },
   ],
   defaultLocale: 'en-US',
-}
+};
 
 export const getDirection = (locale: string) => {
-  return locale === 'ar' ? 'rtl' : 'ltr'
-}
-export type I18nConfig = typeof i18n
-export type Locale = I18nConfig['locales'][number]
+  return locale === 'ar' ? 'rtl' : 'ltr';
+};
+export type I18nConfig = typeof i18n;
+export type Locale = I18nConfig['locales'][number];
 ```
 
 ## create i18n/routing.ts
 
 ```ts
-import { i18n } from '@/i18n-config'
-import { createNavigation } from 'next-intl/navigation'
-import { defineRouting } from 'next-intl/routing'
+import { i18n } from '@/i18n-config';
+import { createNavigation } from 'next-intl/navigation';
+import { defineRouting } from 'next-intl/routing';
 
 export const routing = defineRouting({
   locales: i18n.locales.map((locale) => locale.code),
@@ -679,32 +679,32 @@ export const routing = defineRouting({
     // If all locales use the same pathname, a single
     // external path can be used for all locales
   },
-})
+});
 
 export const { Link, redirect, usePathname, useRouter } =
-  createNavigation(routing)
+  createNavigation(routing);
 ```
 
 ## create i18n/request.ts
 
 ```ts
-import { getRequestConfig } from 'next-intl/server'
-import { routing } from './routing'
+import { getRequestConfig } from 'next-intl/server';
+import { routing } from './routing';
 
 export default getRequestConfig(async ({ requestLocale }) => {
   // This typically corresponds to the `[locale]` segment
-  let locale = await requestLocale
+  let locale = await requestLocale;
 
   // Ensure that the incoming locale is valid
   if (!locale || !routing.locales.includes(locale as any)) {
-    locale = routing.defaultLocale
+    locale = routing.defaultLocale;
   }
 
   return {
     locale,
     messages: (await import(`../messages/${locale}.json`)).default,
-  }
-})
+  };
+});
 ```
 
 ## create messages/en-US.json
@@ -760,6 +760,8 @@ export default getRequestConfig(async ({ requestLocale }) => {
     "Most Popular Shoes For Sale": "Most Popular Shoes For Sale",
     "Best Sellers in T-Shirts": "Best Sellers in T-Shirts",
     "Best Deals on Wrist Watches": "Best Deals on Wrist Watches"
+    "bestDealsMobile": "Best Deals on Wrist Watches"
+
   },
   "Product": {
     "Added to Cart": "Added to Cart",
@@ -2209,65 +2211,65 @@ import { getSetting } from './setting.actions'
 ## create lib/actions/setting.actions.ts
 
 ```ts
-'use server'
-import { ISettingInput } from '@/types'
-import data from '../data'
-import Setting from '../db/models/setting.model'
-import { connectToDatabase } from '../db'
-import { formatError } from '../utils'
-import { cookies } from 'next/headers'
+'use server';
+import { ISettingInput } from '@/types';
+import data from '../data';
+import Setting from '../db/models/setting.model';
+import { connectToDatabase } from '../db';
+import { formatError } from '../utils';
+import { cookies } from 'next/headers';
 
 const globalForSettings = global as unknown as {
-  cachedSettings: ISettingInput | null
-}
+  cachedSettings: ISettingInput | null;
+};
 export const getNoCachedSetting = async (): Promise<ISettingInput> => {
-  await connectToDatabase()
-  const setting = await Setting.findOne()
-  return JSON.parse(JSON.stringify(setting)) as ISettingInput
-}
+  await connectToDatabase();
+  const setting = await Setting.findOne();
+  return JSON.parse(JSON.stringify(setting)) as ISettingInput;
+};
 
 export const getSetting = async (): Promise<ISettingInput> => {
   if (!globalForSettings.cachedSettings) {
-    console.log('hit db')
-    await connectToDatabase()
-    const setting = await Setting.findOne().lean()
+    console.log('hit db');
+    await connectToDatabase();
+    const setting = await Setting.findOne().lean();
     globalForSettings.cachedSettings = setting
       ? JSON.parse(JSON.stringify(setting))
-      : data.settings[0]
+      : data.settings[0];
   }
-  return globalForSettings.cachedSettings as ISettingInput
-}
+  return globalForSettings.cachedSettings as ISettingInput;
+};
 
 export const updateSetting = async (newSetting: ISettingInput) => {
   try {
-    await connectToDatabase()
+    await connectToDatabase();
     const updatedSetting = await Setting.findOneAndUpdate({}, newSetting, {
       upsert: true,
       new: true,
-    }).lean()
+    }).lean();
     globalForSettings.cachedSettings = JSON.parse(
       JSON.stringify(updatedSetting)
-    ) // Update the cache
+    ); // Update the cache
     return {
       success: true,
       message: 'Setting updated successfully',
-    }
+    };
   } catch (error) {
-    return { success: false, message: formatError(error) }
+    return { success: false, message: formatError(error) };
   }
-}
+};
 
 // Server action to update the currency cookie
 export const setCurrencyOnServer = async (newCurrency: string) => {
-  'use server'
-  const cookiesStore = await cookies()
-  cookiesStore.set('currency', newCurrency)
+  'use server';
+  const cookiesStore = await cookies();
+  cookiesStore.set('currency', newCurrency);
 
   return {
     success: true,
     message: 'Currency updated successfully',
-  }
-}
+  };
+};
 ```
 
 ## update lib/actions/user.actions.ts
